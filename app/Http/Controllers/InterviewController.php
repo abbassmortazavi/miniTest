@@ -114,28 +114,38 @@ class InterviewController extends Controller
             'message'=>'Token not exists!!'
         ]);
     }
-    public function sendNotify()
+    public function sendNotify(Request $request)
     {
-        $interviews = Interview::all();
-        $timeNow = Carbon::now()->format('H:i');
+        $user = JWTAuth::parseToken()->authenticate();
 
-        foreach ($interviews as $interview)
+       // $token = $request->header('Authorization');
+        if ($user)
         {
-            $time = $interview->time;
-            $start_time = $timeNow;
-            $end_time = $time;
+            $interviews = Interview::all();
+            $timeNow = Carbon::now()->format('H:i');
 
-            $startTime = Carbon::parse($start_time);
-            $endTime = Carbon::parse($end_time);
+            foreach ($interviews as $interview)
+            {
+                $time = $interview->time;
+                $start_time = $timeNow;
+                $end_time = $time;
 
-            $totalDuration = $endTime->diffForHumans($startTime);
-            $ex = explode(' ' , $totalDuration);
-            if ($ex[0] == 30){
-                Event::dispatch(new SendMail(1));
+                $startTime = Carbon::parse($start_time);
+                $endTime = Carbon::parse($end_time);
+
+                $totalDuration = $endTime->diffForHumans($startTime);
+                $ex = explode(' ' , $totalDuration);
+                if ($ex[0] == 30){
+                    Event::dispatch(new SendMail(1));
+                }
+                return response()->json([
+                    'message'=>'User not found until send email'
+                ]);
             }
-            return response()->json([
-                'message'=>'User not found until send email'
-            ]);
         }
+        return response()->json([
+            'message'=>'Token not exits!!!'
+        ]);
+
     }
 }
