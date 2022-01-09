@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [\App\Http\Controllers\AuthController::class , 'login']);
 Route::post('register', [\App\Http\Controllers\AuthController::class , 'register']);
 
-Route::group(['middleware' => 'api','prefix' => 'auth'], function ($router) {
+Route::group(['middleware' => 'jwt.auth','prefix' => 'auth'], function ($router) {
     Route::post('logout', [\App\Http\Controllers\AuthController::class , 'logout']);
     Route::post('refresh', [\App\Http\Controllers\AuthController::class , 'refresh']);
     Route::post('me', 'AuthController@me');

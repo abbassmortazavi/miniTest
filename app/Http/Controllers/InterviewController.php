@@ -117,6 +117,13 @@ class InterviewController extends Controller
     public function sendNotify(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
+        if ($user)
+        {
+            dd('ok');
+        }else{
+            dd('no');
+        }
+
 
        // $token = $request->header('Authorization');
         if ($user)
@@ -136,6 +143,8 @@ class InterviewController extends Controller
                 $totalDuration = $endTime->diffForHumans($startTime);
                 $ex = explode(' ' , $totalDuration);
                 if ($ex[0] == 30){
+
+                    //just send static user id
                     Event::dispatch(new SendMail(1));
                 }
                 return response()->json([

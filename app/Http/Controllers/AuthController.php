@@ -4,25 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Validator;
 
 class AuthController extends Controller
 {
     public $loginAfterSignUp = true;
+    public function register(Request $request) {
 
-    public function register(Request $request)
-    {
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string|email|max:100|unique:users',
+            'password' => 'required|min:4',
+        ]);
+
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
 
-       // $token = auth()->login($user);
-
         return response()->json([
-            'message'=>'Register SuccessFully!!',
-            'data'=>$user
-        ]);
+            'message' => 'User successfully registered',
+            'user' => $user
+        ], 201);
     }
 
     public function login(Request $request)
